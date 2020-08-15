@@ -1,0 +1,11 @@
+pipeline_strategy:
+build:
+  allow_concurrent: false
+  properties:
+    days_to_keep: -1
+    num_to_keep: 5
+pipeline:
+  git_url: https://github.com/souravatta/Install-Configure.git
+  creds_id: github
+  branch: master
+  script_path: Jenkinsfile

@@ -1,0 +1,94 @@
+{% if build is not defined -%}
+  {% set build = {'properties':{}} -%}
+{% endif -%}
+{% if triggers is not defined -%}
+  {% set triggers = {} -%}
+{% endif -%}
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.31">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>{{ build.properties.days_to_keep|default(-1, true) }}</daysToKeep>
+        <numToKeep>{{ build.properties.num_to_keep|default(5, true) }}</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>5</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    {% if build.disable_concurrent is sameas true -%}
+      <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+    {% endif -%}
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.11">
+      <gitLabConnection></gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    {% if build.parameters is defined -%}
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+      {% for param in build.parameters -%}    
+        <hudson.model.StringParameterDefinition>
+          <name>{{ param.name }}</name>
+          <description>{{ param.description|default('Do not edit manually', true) }}</description>
+          <defaultValue>{{ param.value }}</defaultValue>
+          <trim>true</trim>
+        </hudson.model.StringParameterDefinition>
+      {% endfor -%}
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    {% endif -%}
+    <org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty>
+      <hint>{{ pipeline_strategy|default('PERFORMANCE_OPTIMIZED', true) }}</hint>
+    </org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin="gitlab-plugin@1.5.11">
+          <spec></spec>
+          <triggerOnPush>{{ triggers.on_push|default('false', true) }}</triggerOnPush>
+          <triggerOnMergeRequest>{{ triggers.on_merge_request|default('false', true) }}</triggerOnMergeRequest>
+          <triggerOnPipelineEvent>false</triggerOnPipelineEvent>
+          <triggerOnAcceptedMergeRequest>{{ triggers.on_merge_accept|default('false', true) }}</triggerOnAcceptedMergeRequest>
+          <triggerOnClosedMergeRequest>{{ triggers.on_merge_close|default('false', true) }}</triggerOnClosedMergeRequest>
+          <triggerOnApprovedMergeRequest>{{ triggers.on_merge_approve|default('false', true) }}</triggerOnApprovedMergeRequest>
+          <triggerOpenMergeRequestOnPush>{{ triggers.on_open_merge_on_push|default('false', true) }}</triggerOpenMergeRequestOnPush>
+          <triggerOnNoteRequest>{{ triggers.on_note_request|default('false', true) }}</triggerOnNoteRequest>
+          <noteRegex>{{ triggers.note_regex|default('', true) }}</noteRegex>
+          <ciSkip>true</ciSkip>
+          <skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest>
+          <setBuildDescription>true</setBuildDescription>
+          <branchFilterType>All</branchFilterType>
+          <includeBranchesSpec></includeBranchesSpec>
+          <excludeBranchesSpec></excludeBranchesSpec>
+          <sourceBranchRegex></sourceBranchRegex>
+          <targetBranchRegex></targetBranchRegex>
+          <pendingBuildName></pendingBuildName>
+          <cancelPendingBuildsOnUpdate>false</cancelPendingBuildsOnUpdate>
+        </com.dabsquared.gitlabjenkins.GitLabPushTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.62">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+      <configVersion>2</configVersion>
+      <userRemoteConfigs>
+        <hudson.plugins.git.UserRemoteConfig>
+          <url>{{ pipeline.git_url }}</url>
+          <credentialsId>{{ pipeline.creds_id }}</credentialsId>
+        </hudson.plugins.git.UserRemoteConfig>
+      </userRemoteConfigs>
+      <branches>
+        <hudson.plugins.git.BranchSpec>
+          <name>{{ pipeline.branch }}</name>
+        </hudson.plugins.git.BranchSpec>
+      </branches>
+      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+      <submoduleCfg class="list"/>
+      <extensions/>
+    </scm>
+    <scriptPath>{{ pipeline.script_path }}</scriptPath>
+    <lightweight>true</lightweight>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
