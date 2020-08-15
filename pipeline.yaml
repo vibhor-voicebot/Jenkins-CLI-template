@@ -1,11 +1,28 @@
+# Pipeline speed and durability property
 pipeline_strategy:
+# General options for the job
 build:
   allow_concurrent: false
   properties:
+    # Days to keep old builds
     days_to_keep: -1
+    # Number of old builds to keep
     num_to_keep: 5
+  # A list of parameters when the pipeline is parameterized
+  parameters:
+    # Name of parameter. Usually named using CAPITAL LETTERS
+    - name: GREET_NAME
+      # String value for the parameter. Can be left empty
+      value: Sourav
+      # A helper text for the parameter. Can be empty
+      description: Name of the person to greet
+# Information of where to find the jenkins file
 pipeline:
+  # The .git git url.
   git_url: https://github.com/souravatta/Install-Configure.git
+  # The credentials to use
   creds_id: github
+  # Branch or tag to use
   branch: master
+  # Location of Jenkinsfile
   script_path: Jenkinsfile
