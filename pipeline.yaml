@@ -16,6 +16,15 @@ build:
       value: Sourav
       # A helper text for the parameter. Can be empty
       description: Name of the person to greet
+# How the job should be trigered. Below are the default values
+triggers:
+  on_push: false
+  on_merge_request: false
+  on_merge_accept: false
+  on_merge_close: false
+  on_merge_approve: false
+  # When to rerun the job for an existing merge request. source/both/never
+  on_open_merge_on_push: source
 # Information of where to find the jenkins file
 pipeline:
   # The .git git url.
