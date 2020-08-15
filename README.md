@@ -22,6 +22,7 @@
       - [Using the CLI client](#using-the-cli-client)
   - [Usage](#usage)
   - [Example (pipeline.yaml)](#example-pipelineyaml)
+  - [Example (Jenkinsfile)](#example-jenkinsfile)
 
 ---
 
@@ -130,4 +131,21 @@ pipeline:
   creds_id: github
   branch: master
   script_path: Jenkinsfile
+```
+
+---
+
+## Example (Jenkinsfile)
+
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage ('Greeting'){
+            steps {
+                echo "Hello ${env.GREET_NAME}"
+            }
+        }
+    }
+}
 ```
