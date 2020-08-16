@@ -54,7 +54,7 @@ The command line interface can be accessed over SSH or with the Jenkins CLI clie
 <a><img src="https://raw.githubusercontent.com/souravatta/Install-Configure/master/img/ssh_port.jpg?v=3&s=20" title="sshd-port" alt="sshd-port"></a>
 
 * User used for authentication with Jenkins master must have Overall/Read permission in order to access CLI.
-* Add SSH public key for the user by navigating to Manage Jenkins → Manage Users → User Settings.
+* Add SSH public key for the user (which will be used to run Jenkins CLI commands) by navigating to Manage Jenkins → Manage Users → User Settings.
 
 <a><img src="https://raw.githubusercontent.com/souravatta/Install-Configure/master/img/ssh_pub_key.jpg?v=3&s=20" title="ssh-pub-key" alt="ssh-pub-key"></a>
 
