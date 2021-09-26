@@ -13,7 +13,7 @@ build:
     # Name of parameter. Usually named using CAPITAL LETTERS
     - name: GREET_NAME
       # String value for the parameter. Can be left empty
-      value: Sourav
+      value: Hey There
       # A helper text for the parameter. Can be empty
       description: Name of the person to greet
 # How the job should be trigered. Below are the default values
